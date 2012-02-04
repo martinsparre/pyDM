@@ -434,13 +434,18 @@ class DM_structure:
         return self.Snapshot
         
 
-    def FindCenter(self):
+    def FindCenter(self,Median = True,N_Median=10):
         "define center to be the particle with the lowest potential"
         self.V_index = scipy.argsort(self.Snapshot.V)
-        self.x_C = self.Snapshot.x[self.V_index[0]]
-        self.y_C = self.Snapshot.y[self.V_index[0]]
-        self.z_C = self.Snapshot.z[self.V_index[0]]
-
+        if Median == False:
+            self.x_C = self.Snapshot.x[self.V_index[0]]
+            self.y_C = self.Snapshot.y[self.V_index[0]]
+            self.z_C = self.Snapshot.z[self.V_index[0]]
+        else:
+            self.x_C = scipy.median(self.Snapshot.x[self.V_index[0:N_Median]])
+            self.y_C =  scipy.median(self.Snapshot.y[self.V_index[0:N_Median]])
+            self.z_C = scipy.median( self.Snapshot.z[self.V_index[0:N_Median]])
+       
     def FindCenterVel(self):
         self.Mean_vx = scipy.mean(self.Snapshot.vx)
         self.Mean_vy = scipy.mean(self.Snapshot.vy)
