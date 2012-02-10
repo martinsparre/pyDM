@@ -446,10 +446,17 @@ class DM_structure:
             self.y_C =  scipy.median(self.Snapshot.y[self.V_index[0:N_Median]])
             self.z_C = scipy.median( self.Snapshot.z[self.V_index[0:N_Median]])
        
-    def FindCenterVel(self):
-        self.Mean_vx = scipy.mean(self.Snapshot.vx)
-        self.Mean_vy = scipy.mean(self.Snapshot.vy)
-        self.Mean_vz = scipy.mean(self.Snapshot.vz)
+    def FindCenterVel(self, Median = True,N_Median = 1000):
+        if Median == False:
+            self.Mean_vx = scipy.mean(self.Snapshot.vx)
+            self.Mean_vy = scipy.mean(self.Snapshot.vy)
+            self.Mean_vz = scipy.mean(self.Snapshot.vz)
+        else:
+            V_index = scipy.argsort(self.Snapshot.V)
+            self.Mean_vx = scipy.median(self.Snapshot.vx[V_index[0:N_Median]])
+            self.Mean_vy =  scipy.median(self.Snapshot.vy[V_index[0:N_Median]])
+            self.Mean_vz = scipy.median( self.Snapshot.vz[V_index[0:N_Median]])
+
 
     def SetCenter(self,x,y,z):
         "Set center manually"
