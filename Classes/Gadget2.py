@@ -83,6 +83,49 @@ class Gadget2Snapshot:
         self.V = self.V[GoodIds]
         self.NPartTotal = len(self.x)
         self.NPart = [0,len(self.x),0,0,0,0]
+
+    def WriteToAscii(self,FileName):
+        f=open(FileName,'w+')
+        
+        self.NPartTotal.tofile(f,sep='\n')
+        f.write('\n')
+        self.x.tofile(f,sep='\n')
+        f.write('\n')
+        self.NPartTotal.tofile(f,sep='\n')
+        f.write('\n')
+        self.y.tofile(f,sep='\n')
+        f.write('\n')
+        self.NPartTotal.tofile(f,sep='\n')
+        f.write('\n')
+        self.z.tofile(f,sep='\n')
+        f.write('\n')
+        self.NPartTotal.tofile(f,sep='\n')
+        f.write('\n')
+        self.vx.tofile(f,sep='\n')
+        f.write('\n')
+        self.NPartTotal.tofile(f,sep='\n')        
+        f.write('\n')
+        self.vy.tofile(f,sep='\n')
+        f.write('\n')
+        self.NPartTotal.tofile(f,sep='\n')        
+        f.write('\n')
+        self.vz.tofile(f,sep='\n')
+        f.write('\n')
+        self.NPartTotal.tofile(f,sep='\n')        
+        f.write('\n')
+        self.m.tofile(f,sep='\n')
+        f.write('\n')
+        self.NPartTotal.tofile(f,sep='\n')        
+        f.write('\n')
+        self.ID.tofile(f,sep='\n')
+        f.write('\n')
+        self.NPartTotal.tofile(f,sep='\n')        
+        f.write('\n')
+        self.V.tofile(f,sep='\n')
+        f.write('\n')
+        self.NPartTotal.tofile(f,sep='\n')
+        f.write('\n')
+        f.close()
         
         
         
@@ -220,8 +263,8 @@ def WriteGadget2(FileName, G):
     WriteBinary(f, 'l', scipy.array([0]*44) )#44*4 bytes remains in the header...
     WriteBinary(f, 'l', scipy.array([256]))
 
-
-    print len(G.x),len(G.y),len(G.z) 
+    if len(G.x) != len(G.y) != len(G.z): 
+        print 'something wrong',len(G.x),len(G.y),len(G.z) 
     WriteBinary(f, 'l', scipy.array([3*4*G.NPartTotal]))
     WriteBinary(f, 'f', scipy.array([G.x,G.y,G.z]).transpose().flatten())
     WriteBinary(f, 'l', scipy.array([3*4*G.NPartTotal]))
@@ -244,7 +287,7 @@ def WriteGadget2(FileName, G):
 
 
     if G.V != None:
-        print G.V, '1'
+#        print 'Writing potentials...'
         WriteBinary(f, 'l', scipy.array([4*G.NPartTotal]))
         WriteBinary(f, 'f', scipy.array(G.V))
         WriteBinary(f, 'l', scipy.array([4*G.NPartTotal]))
