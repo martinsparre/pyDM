@@ -403,13 +403,15 @@ class Grid:
 
 
 class DM_structure:
-    def __init__(self,Gadget2FileName,Snapshot=None):
+    def __init__(self,Gadget2FileName,Snapshot=None,ImportPotential=True):
         if Snapshot == None:
             print 'initializing DM structure'
             if os.path.exists(Gadget2FileName) == False:
                 print '--Error: File '+Gadget2FileName+' does not exist'
             print '-Will now read snapshot '+Gadget2FileName
-            self.Snapshot = Gadget2.ReadGadget2(Gadget2FileName)
+            self.Snapshot = Gadget2.ReadGadget2(Gadget2FileName,ImportPotential=ImportPotential)
+            if ImportPotential==False:
+                print 'Warning: potentials are not imported... Some functions will not work'
             print '-Finished reading snapshot '+Gadget2FileName
         else:
             print "Taking snapshot from input..."

@@ -153,7 +153,7 @@ def WriteBinary(GadgetFile, Type, Array):
     tmp_array.tofile(GadgetFile)
 
 
-def ReadGadget2(FileName):
+def ReadGadget2(FileName,ImportPotential=True):
     if os.path.exists(FileName) == False:
         print 'File: ' + FileName + ' doesnt exist.'
 
@@ -239,14 +239,16 @@ def ReadGadget2(FileName):
     if LengthOfBlock0 != LengthOfBlock1:
         print 'Inconsistent block length in file ' + FileName
 
+    if  ImportPotential:
+        print 'start potential'
+        LengthOfBlock0 =  ReadBinary(f,'l',1)
+        V = ReadBinary(f,'f',NPartTotal)
+        LengthOfBlock1 = ReadBinary(f,'l',1)
 
-    print 'start potential'
-    LengthOfBlock0 =  ReadBinary(f,'l',1)
-    V = ReadBinary(f,'f',NPartTotal)
-    LengthOfBlock1 = ReadBinary(f,'l',1)
-
-    if LengthOfBlock0 != LengthOfBlock1:
-        print 'Inconsistent block length in file ' + FileName
+        if LengthOfBlock0 != LengthOfBlock1:
+            print 'Inconsistent block length in file ' + FileName
+    else:
+        V=None
 
     return Gadget2Snapshot(FileName=FileName, x=x,y=y,z=z,vx=vx,vy=vy,vz=vz,ID=ID,m=m,V=V,NPart=NPart,NPartTotal=NPartTotal,MassArray=MassArray,Time=Time)
 
