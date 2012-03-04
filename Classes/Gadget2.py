@@ -31,7 +31,7 @@ class Gadget2Snapshot:
         
     def SelectIDsMax(self,IDMax):
         GoodIds = scipy.where(self.ID<IDMax)
-        print GoodIds, len(self.x)
+
         self.x = self.x[GoodIds]
         self.y = self.y[GoodIds]
         self.z = self.z[GoodIds]
@@ -40,7 +40,8 @@ class Gadget2Snapshot:
         self.vz = self.vz[GoodIds]
         self.m = self.m[GoodIds]
         self.ID = self.ID[GoodIds]
-        self.V = self.V[GoodIds]
+        if self.V != None:
+            self.V = self.V[GoodIds]
         self.NPartTotal = len(self.x)
         self.NPart = [0,len(self.x),0,0,0,0]
         
@@ -55,7 +56,8 @@ class Gadget2Snapshot:
         self.vz = self.vz[GoodIds]
         self.m = self.m[GoodIds]
         self.ID = self.ID[GoodIds]
-        self.V = self.V[GoodIds]
+        if self.V != None:
+            self.V = self.V[GoodIds]
         self.NPartTotal = len(self.x)
         self.NPart = [0,len(self.x),0,0,0,0]
         
