@@ -397,6 +397,8 @@ class Grid:
 
         if self.d2rhodr2 != None:
             self.d2rhodr2 =  scipy.delete(self.d2rhodr2,ID)
+        
+        
 
 
         print "RemoveBadRegions finished\n"
@@ -428,6 +430,9 @@ class DM_structure:
         self.Mean_vy = 0.0
         self.Mean_vz = 0.0
 
+        self.CenterFound = False
+        self.CenterVelFound = False
+
 
     def GetSnapshot(self):
         if self.Snapshot == None:
@@ -438,6 +443,10 @@ class DM_structure:
 
     def FindCenter(self,Median = True,N_Median=10):
         "define center to be the particle with the lowest potential"
+        
+        if self.Snapshot.V == None:
+            print 'Potentials not defined. Can not find center'
+            return None
         self.V_index = scipy.argsort(self.Snapshot.V)
         if Median == False:
             self.x_C = self.Snapshot.x[self.V_index[0]]
@@ -447,6 +456,8 @@ class DM_structure:
             self.x_C = scipy.median(self.Snapshot.x[self.V_index[0:N_Median]])
             self.y_C =  scipy.median(self.Snapshot.y[self.V_index[0:N_Median]])
             self.z_C = scipy.median( self.Snapshot.z[self.V_index[0:N_Median]])
+        
+        self.CenterFound = True
        
     def FindCenterVel(self, Median = True,N_Median = 1000):
         if Median == False:
@@ -454,10 +465,16 @@ class DM_structure:
             self.Mean_vy = scipy.mean(self.Snapshot.vy)
             self.Mean_vz = scipy.mean(self.Snapshot.vz)
         else:
+            if self.Snapshot.V == None:
+                print 'Potentials not defined. Can not find center'
+                return None
+
             V_index = scipy.argsort(self.Snapshot.V)
             self.Mean_vx = scipy.median(self.Snapshot.vx[V_index[0:N_Median]])
             self.Mean_vy =  scipy.median(self.Snapshot.vy[V_index[0:N_Median]])
             self.Mean_vz = scipy.median( self.Snapshot.vz[V_index[0:N_Median]])
+        
+        self.CenterVelFound = True
 
 
     def SetCenter(self,x,y,z):
@@ -465,22 +482,30 @@ class DM_structure:
         self.x_C = x
         self.y_C = y
         self.z_C = z
+        self.CenterFound = True
     
     def SetCenterVel(self,vx,vy,vz):
         self.Mean_vx = vx
         self.Mean_vy = vy
-        self.Mean_vz = vz       
+        self.Mean_vz = vz
+        self.CenterVelFound = True       
     
     def CenterParticlePositions(self):
-        self.Snapshot.x -= self.x_C
-        self.Snapshot.y -= self.y_C
-        self.Snapshot.z -= self.z_C        
+        if self.CenterFound:
+            self.Snapshot.x -= self.x_C
+            self.Snapshot.y -= self.y_C
+            self.Snapshot.z -= self.z_C
+        else:
+            print 'Warning: Position center not defined'        
 
     def CenterParticleVelocities(self):
-        self.Snapshot.vx -= self.Mean_vx
-        self.Snapshot.vy -= self.Mean_vy
-        self.Snapshot.vz -= self.Mean_vz
-    
+        if self.CenterVelFound:
+            self.Snapshot.vx -= self.Mean_vx
+            self.Snapshot.vy -= self.Mean_vy
+            self.Snapshot.vz -= self.Mean_vz
+        else:
+            print 'Warning: Velocity center not defined'    
+            
     def CenterSnapshotPosAndVel(self):
         self.Snapshot.CenterPos( self.x_C, self.y_C, self.z_C)
         self.Snapshot.CenterVel( self.Mean_vx, self.Mean_vy, self.Mean_vz)
@@ -496,10 +521,18 @@ class DM_structure:
 
 
 
-    def CreateGridLogBins(self,Rmin=0.01,Rmax=100,NBins=100):
+    def CreateGridLogBins(self,Rmin=False,Rmax=False,NBins=100):
         "Spherical bins, distributed equally in logspace"
         print "\nCreateGridLogBins started"
         r = scipy.sqrt(self.Snapshot.x*self.Snapshot.x+self.Snapshot.y*self.Snapshot.y+self.Snapshot.z*self.Snapshot.z)
+        
+        Index = scipy.argsort(r)
+        if Rmin == False:
+            Rmin = scipy.mean(r[Index[0:10]])
+
+        if Rmax == False:
+            Rmax = scipy.mean(r[Index[-10:-1]])
+        
         LeftBinLimit = scipy.logspace(scipy.log10(Rmin),scipy.log10(Rmax),NBins)
         dlogx = scipy.log10(LeftBinLimit[1]/LeftBinLimit[0])
         BinNo = scipy.array(scipy.log10(r/LeftBinLimit[0])/dlogx,int)
@@ -525,8 +558,9 @@ class DM_structure:
                 RmaxBin = 2*LeftBinLimit[Bin]-LeftBinLimit[Bin-1]
 
             Volume = 4.0/3.0 * 3.14159265359 * (RmaxBin**3 - RminBin**3)
-
-            V = scipy.mean(self.Snapshot.V[Particles])
+            
+            if self.Snapshot.V != None:
+                V = scipy.mean(self.Snapshot.V[Particles])
             Sigma2 = scipy.mean(v2[Particles])
             MeanVr = scipy.mean(vr[Particles])
             Sigma2r = scipy.mean(vr[Particles]**2)
@@ -541,7 +575,8 @@ class DM_structure:
             self.GrSph.Sigma2.append(Sigma2 )            
             self.GrSph.Sigma2r.append(Sigma2r )
             self.GrSph.Beta.append(Beta)
-            self.GrSph.V.append(V)
+            if self.Snapshot.V != None:
+                self.GrSph.V.append(V)
             self.GrSph.MeanVr.append(MeanVr)
             self.GrSph.CumulativeMass.append(sum(self.GrSph.MassInBin))
 
@@ -567,7 +602,8 @@ class DM_structure:
         self.GrSph.Rmin = scipy.array(self.GrSph.Rmin)
         self.GrSph.Rmax = scipy.array(self.GrSph.Rmax)
         self.GrSph.R = scipy.array(self.GrSph.R)
-        self.GrSph.V = scipy.array(self.GrSph.V)
+        if self.Snapshot.V != None:
+            self.GrSph.V = scipy.array(self.GrSph.V)
         self.GrSph.Sigma2 = scipy.array(self.GrSph.Sigma2)
         self.GrSph.Sigma2r = scipy.array(self.GrSph.Sigma2r)
         self.GrSph.Beta = scipy.array(self.GrSph.Beta)
