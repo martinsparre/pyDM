@@ -82,10 +82,29 @@ class Gadget2Snapshot:
         self.vz = self.vz[GoodIds]
         self.m = self.m[GoodIds]
         self.ID = self.ID[GoodIds]
-        self.V = self.V[GoodIds]
+        if self.V != None:
+            self.V = self.V[GoodIds]
         self.NPartTotal = len(self.x)
         self.NPart = [0,len(self.x),0,0,0,0]
 
+        
+    def SelectParticles(self,Condition):
+        GoodIds = scipy.where(Condition)
+        self.x = self.x[GoodIds]
+        self.y = self.y[GoodIds]
+        self.z = self.z[GoodIds]
+        self.vx = self.vx[GoodIds]
+        self.vy = self.vy[GoodIds]
+        self.vz = self.vz[GoodIds]
+        self.m = self.m[GoodIds]
+        self.ID = self.ID[GoodIds]
+        if self.V != None:
+            self.V = self.V[GoodIds]
+        self.NPartTotal = len(self.x)
+        self.NPart = [0,len(self.x),0,0,0,0]        
+        
+        
+        
     def WriteToAscii(self,FileName):
         f=open(FileName,'w+')
         

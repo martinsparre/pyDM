@@ -86,6 +86,7 @@ class Grid:
         self.Rmin = []
         self.MeanVr = []
         self.CumulativeMass = []
+        self.SigmaTensor = []
         self.dnu2dpsi2_psi = None
         self.dnu2dpsi2 = None
         self.drhodr = None
@@ -429,7 +430,6 @@ class DM_structure:
         self.Mean_vx = 0.0
         self.Mean_vy = 0.0
         self.Mean_vz = 0.0
-
         self.CenterFound = False
         self.CenterVelFound = False
 
@@ -518,10 +518,7 @@ class DM_structure:
                 #return [self.Snapshot.x[i],self.Snapshot.y[i],self.Snapshot.z[i],self.Snapshot.vx[i],self.Snapshot.vy[i],self.Snapshot.vz[i],self.Snapshot.ID[i] ]
                 
 
-
-
-
-    def CreateGridLogBins(self,Rmin=False,Rmax=False,NBins=100):
+    def CreateGridLogBins(self,Rmin=False,Rmax=False,NBins=100,CalcVelDispTensor = False):
         "Spherical bins, distributed equally in logspace"
         print "\nCreateGridLogBins started"
         r = scipy.sqrt(self.Snapshot.x*self.Snapshot.x+self.Snapshot.y*self.Snapshot.y+self.Snapshot.z*self.Snapshot.z)
@@ -548,7 +545,7 @@ class DM_structure:
         for Bin in range(NBins):
             Particles=scipy.where(BinNo==Bin)
             Mass = scipy.sum(self.Snapshot.m[Particles])
-            N = len(Particles)
+            N = len(Particles[0])
 
             RminBin = LeftBinLimit[Bin]
             
@@ -567,6 +564,22 @@ class DM_structure:
             #Sigma2r = scipy.mean((vr[Particles]-MeanVr)**2)
             Beta = 1.0 - (Sigma2-Sigma2r)/(2.0*Sigma2r)
 
+            
+            if CalcVelDispTensor:
+                Tensor = scipy.zeros((3,3))
+                Tensor[0,0] = scipy.mean(self.Snapshot.vx[Particles] * self.Snapshot.vx[Particles]) - scipy.mean(self.Snapshot.vx[Particles])  *scipy.mean( self.Snapshot.vx[Particles])
+                Tensor[1,1] = scipy.mean(self.Snapshot.vy[Particles] * self.Snapshot.vy[Particles]) - scipy.mean(self.Snapshot.vy[Particles])  *scipy.mean( self.Snapshot.vy[Particles])               
+                Tensor[2,2] = scipy.mean(self.Snapshot.vz[Particles] * self.Snapshot.vz[Particles]) - scipy.mean(self.Snapshot.vz[Particles])  *scipy.mean( self.Snapshot.vz[Particles])
+                Tensor[0,1] = scipy.mean(self.Snapshot.vx[Particles] * self.Snapshot.vy[Particles]) - scipy.mean(self.Snapshot.vx[Particles])  *scipy.mean( self.Snapshot.vy[Particles])
+                Tensor[1,0] = Tensor[0,1] 
+                Tensor[0,2] = scipy.mean(self.Snapshot.vx[Particles] * self.Snapshot.vz[Particles]) - scipy.mean(self.Snapshot.vx[Particles])  *scipy.mean( self.Snapshot.vz[Particles])
+                Tensor[2,0] = Tensor[0,2]  
+                Tensor[1,2] = scipy.mean(self.Snapshot.vy[Particles] * self.Snapshot.vz[Particles]) - scipy.mean(self.Snapshot.vy[Particles])  *scipy.mean( self.Snapshot.vz[Particles])
+                Tensor[2,1] = Tensor[1,2]
+                self.GrSph.SigmaTensor.append(Tensor)
+
+
+                
             self.GrSph.Rmin.append(RminBin)
             self.GrSph.Rmax.append(RmaxBin)
             self.GrSph.MassInBin.append(Mass)
