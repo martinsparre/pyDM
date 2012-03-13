@@ -518,7 +518,7 @@ class DM_structure:
                 #return [self.Snapshot.x[i],self.Snapshot.y[i],self.Snapshot.z[i],self.Snapshot.vx[i],self.Snapshot.vy[i],self.Snapshot.vz[i],self.Snapshot.ID[i] ]
                 
 
-    def CreateGridLogBins(self,Rmin=False,Rmax=False,NBins=100,CalcVelDispTensor = False):
+    def CreateGridLogBins(self,Rmin=False,Rmax=False,NBins=100,CalcVelDispTensor = False,UseSphericalCoordinates=True):
         "Spherical bins, distributed equally in logspace"
         print "\nCreateGridLogBins started"
         r = scipy.sqrt(self.Snapshot.x*self.Snapshot.x+self.Snapshot.y*self.Snapshot.y+self.Snapshot.z*self.Snapshot.z)
@@ -537,8 +537,27 @@ class DM_structure:
         BinNo[scipy.where(BinNo<0)]=0
         BinNo[scipy.where(BinNo>NBins-1)]=NBins-1
         
-        v2 = self.Snapshot.vx*self.Snapshot.vx+self.Snapshot.vy*self.Snapshot.vy+self.Snapshot.vz*self.Snapshot.vz
-        vr = 1.0/(r+1.0e-16)*scipy.array(self.Snapshot.vx*self.Snapshot.x + self.Snapshot.vy*self.Snapshot.y + self.Snapshot.vz*self.Snapshot.z)        
+
+        
+        
+        if UseSphericalCoordinates:
+            Phi = scipy.arctan2(self.Snapshot.y,self.Snapshot.x)
+            Theta = scipy.arccos(self.Snapshot.z/r)
+            
+            VR = scipy.sin(Theta)*scipy.cos(Phi) * self.Snapshot.vx  + scipy.sin(Theta)*scipy.sin(Phi) * self.Snapshot.vy + scipy.cos(Theta) * self.Snapshot.vz
+            VTheta = scipy.cos(Theta)*scipy.cos(Phi) * self.Snapshot.vx + scipy.cos(Theta)*scipy.sin(Phi) * self.Snapshot.vy - scipy.sin(Theta) * self.Snapshot.vz
+            VPhi = - scipy.sin(Phi) * self.Snapshot.vx +  scipy.cos(Phi) * self.Snapshot.vy
+        else:
+            v2 = self.Snapshot.vx*self.Snapshot.vx+self.Snapshot.vy*self.Snapshot.vy+self.Snapshot.vz*self.Snapshot.vz
+            vr = 1.0/(r+1.0e-16)*scipy.array(self.Snapshot.vx*self.Snapshot.x + self.Snapshot.vy*self.Snapshot.y + self.Snapshot.vz*self.Snapshot.z)                    
+#        vx1 = VR1 * scipy.sin(Theta1) * scipy.cos(Phi1) + VTheta1 * scipy.cos(Theta1) * scipy.cos(Phi1) - VPhi1 * scipy.sin(Phi1)
+#        vy1 = VR1 * scipy.sin(Theta1) * scipy.sin(Phi1) + VTheta1 * scipy.cos(Theta1) * scipy.sin(Phi1) + VPhi1 * scipy.cos(Phi1)
+#        vz1 = VR1 * scipy.cos(Theta1) - VTheta1 * scipy.sin(Theta1)
+#        print self.Snapshot.vx,vx1
+#        print 'A',max(abs(self.Snapshot.vx-vx1))
+#        print 'B',max(abs(self.Snapshot.vy-vy1))
+#        print 'C',max(abs(self.Snapshot.vz-vz1))
+
         
         self.GrSph = Grid()
         
@@ -558,13 +577,23 @@ class DM_structure:
             
             if self.Snapshot.V != None:
                 V = scipy.mean(self.Snapshot.V[Particles])
-            Sigma2 = scipy.mean(v2[Particles])
-            MeanVr = scipy.mean(vr[Particles])
-            Sigma2r = scipy.mean(vr[Particles]**2)
-            #Sigma2r = scipy.mean((vr[Particles]-MeanVr)**2)
-            Beta = 1.0 - (Sigma2-Sigma2r)/(2.0*Sigma2r)
 
+                
             
+            if UseSphericalCoordinates:
+                Sigma2r = scipy.mean(VR[Particles]**2)-scipy.mean(VR[Particles])**2
+                Sigma2Theta = scipy.mean(VTheta[Particles]**2)-scipy.mean(VTheta[Particles])**2
+                Sigma2Phi = scipy.mean(VPhi[Particles]**2)-scipy.mean(VPhi[Particles])**2
+                Sigma2 = Sigma2r + Sigma2Theta + Sigma2Phi
+                Beta =  1.0 - (Sigma2Theta+Sigma2Phi)/(2.0*Sigma2r)
+                MeanVr = scipy.mean(VR[Particles])
+            else:
+                MeanVr = scipy.mean(vr[Particles])
+                Sigma2r = scipy.mean(vr[Particles]**2)
+                Sigma2 = scipy.mean(v2[Particles])
+                Beta = 1.0 - (Sigma2-Sigma2r)/(2.0*Sigma2r)
+
+
             if CalcVelDispTensor:
                 Tensor = scipy.zeros((3,3))
                 Tensor[0,0] = scipy.mean(self.Snapshot.vx[Particles] * self.Snapshot.vx[Particles]) - scipy.mean(self.Snapshot.vx[Particles])  *scipy.mean( self.Snapshot.vx[Particles])
