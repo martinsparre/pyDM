@@ -82,6 +82,7 @@ class Grid:
         self.Rho = []
         self.MassInBin = []
         self.N = []
+        self.JeansMass = []
         self.Rmax = []
         self.Rmin = []
         self.MeanVr = []
@@ -653,6 +654,7 @@ class DM_structure:
         self.GrSph.Gamma = scipy.array(self.GrSph.Gamma)
         self.GrSph.Kappa = scipy.array(self.GrSph.Kappa)
         self.GrSph.CumulativeMass = scipy.array(self.GrSph.CumulativeMass)
+        self.GrSph.JeansMassFrac = - self.GrSph.CumulativeMass / self.GrSph.R / self.GrSph.Sigma2r / (self.GrSph.Gamma+self.GrSph.Kappa+2.0*self.GrSph.Beta)
 
         print "CreateGridLogBins ended\n"
         
