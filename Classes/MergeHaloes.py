@@ -113,3 +113,34 @@ def MergeHaloes(OldGadgetFilename1,OldGadgetFilename2, NewFilename, DeltaPos = [
     New = Gadget2.Gadget2Snapshot(x=x, y=y, z=z,vx=vx,vy=vy,vz=vz,ID=ID, m=m,NPartTotal=NPartTotal, NPart=NPart,Time=Time,MassArray=MassArray, V=None)
 
     Gadget2.WriteGadget2(NewFilename , New)
+
+    
+    
+def MergeSnapshots(G,G0,ImportPotential=True):
+    "This function clones a structure. It can be used to create IC's for merger collisions."
+#    G = Gadget2.ReadGadget2(OldGadgetFilename1,ImportPotential=ImportPotential)
+#    G0 = Gadget2.ReadGadget2(OldGadgetFilename2,ImportPotential=ImportPotential)
+
+
+    x = scipy.append(G.x,G0.x)
+    y = scipy.append(G.y,G0.y)
+    z = scipy.append(G.z,G0.z)
+
+    vx = scipy.append(G.vx,G0.vx)
+    vy = scipy.append(G.vy,G0.vy)
+    vz = scipy.append(G.vz,G0.vz)
+
+    m = scipy.append(G.m,G0.m)
+    print len(x),len(y),len(z),len(vx),len(vy),len(vz),len(m)
+
+    ID = scipy.array(range(len(m)))
+    
+    NPart = scipy.array(scipy.array([0,len(m),0,0,0,0]))
+    NPartTotal = scipy.array([len(m)])
+    MassArray = scipy.array(6*[0])
+    Time = scipy.array([0.0])
+
+    New = Gadget2.Gadget2Snapshot(x=x, y=y, z=z,vx=vx,vy=vy,vz=vz,ID=ID, m=m,NPartTotal=NPartTotal, NPart=NPart,Time=Time,MassArray=MassArray, V=None)
+
+    return New
+    #Gadget2.WriteGadget2(NewFilename , New)    
