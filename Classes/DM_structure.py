@@ -4,6 +4,7 @@ import os.path
 import scipy
 import scipy.interpolate,scipy.optimize
 import math
+import numpy.random
 
 def chunks(l, n):
     """ Yield successive n-sized chunks from l.
@@ -77,6 +78,8 @@ class Grid:
         self.Sigma2 = []
         self.Sigma2r = []
         self.Beta = []
+        self.UncBetaBootstrap = []
+        self.MeanBetaBootstrap = []        
         self.Gamma = []
         self.Kappa = []
         self.Rho = []
@@ -522,7 +525,7 @@ class DM_structure:
                 #return [self.Snapshot.x[i],self.Snapshot.y[i],self.Snapshot.z[i],self.Snapshot.vx[i],self.Snapshot.vy[i],self.Snapshot.vz[i],self.Snapshot.ID[i] ]
                 
 
-    def CreateGridLogBins(self,Rmin=False,Rmax=False,NBins=100,CalcVelDispTensor = False,UseSphericalCoordinates=True):
+    def CreateGridLogBins(self,Rmin=False,Rmax=False,NBins=100,CalcVelDispTensor = False,UseSphericalCoordinates=True,CalcUncBeta=False):
         "Spherical bins, distributed equally in logspace"
         print "\nCreateGridLogBins started"
         r = scipy.sqrt(self.Snapshot.x*self.Snapshot.x+self.Snapshot.y*self.Snapshot.y+self.Snapshot.z*self.Snapshot.z)
@@ -540,8 +543,6 @@ class DM_structure:
         
         BinNo[scipy.where(BinNo<0)]=0
         BinNo[scipy.where(BinNo>NBins-1)]=NBins-1
-        
-
         
         
         if UseSphericalCoordinates:
@@ -591,12 +592,43 @@ class DM_structure:
                 Sigma2 = Sigma2r + Sigma2Theta + Sigma2Phi
                 Beta =  1.0 - (Sigma2Theta+Sigma2Phi)/(2.0*Sigma2r)
                 MeanVr = scipy.mean(VR[Particles])
+
+
+                if CalcUncBeta == True:
+                    BetaBootstrap = []
+                    for i in range(20):
+                        if len(Particles[0])  < 2:
+                            break
+                            
+#                        print 'A',Particles
+#                        print 'A1',Particles[0]
+#                        print 'B',len(Particles[0])
+#                        print 'B1',numpy.random.randint(0,high=len(Particles[0]),size=len(Particles[0]))
+#                        print 'B2',Particles[0][scipy.array(numpy.random.randint(0,high=len(Particles[0]),size=len(Particles[0])))]
+#                        print 'C',len(Particles)                
+
+                        NewParticles = Particles[0][numpy.random.randint(0,high=len(Particles[0]),size=len(Particles[0]))]
+
+                        NewSigma2r = scipy.mean(VR[NewParticles]**2)-scipy.mean(VR[NewParticles])**2
+                        NewSigma2Theta = scipy.mean(VTheta[NewParticles]**2)-scipy.mean(VTheta[NewParticles])**2
+                        NewSigma2Phi = scipy.mean(VPhi[NewParticles]**2)-scipy.mean(VPhi[NewParticles])**2
+                        NewSigma2 = NewSigma2r + NewSigma2Theta + NewSigma2Phi
+                        NewBeta =  1.0 - (NewSigma2Theta+NewSigma2Phi)/(2.0*NewSigma2r)
+                        BetaBootstrap.append( NewBeta )
+                    
+                    if len(Particles[0]) < 2:
+                        self.GrSph.UncBetaBootstrap.append(0.0)
+                        self.GrSph.MeanBetaBootstrap.append(0.0)
+                    else:
+                        self.GrSph.UncBetaBootstrap.append(scipy.std(BetaBootstrap))
+                        self.GrSph.MeanBetaBootstrap.append(scipy.mean(BetaBootstrap))                
+                
             else:
                 MeanVr = scipy.mean(vr[Particles])
                 Sigma2r = scipy.mean(vr[Particles]**2)
                 Sigma2 = scipy.mean(v2[Particles])
                 Beta = 1.0 - (Sigma2-Sigma2r)/(2.0*Sigma2r)
-
+            
 
             if CalcVelDispTensor:
                 Tensor = scipy.zeros((3,3))
@@ -667,6 +699,10 @@ class DM_structure:
         self.GrSph.Lx = scipy.array(self.GrSph.Lx)
         self.GrSph.Ly = scipy.array(self.GrSph.Ly)
         self.GrSph.Lz = scipy.array(self.GrSph.Lz)
+        
+        if CalcUncBeta and UseSphericalCoordinates:
+            self.GrSph.UncBetaBootstrap = scipy.array(self.GrSph.UncBetaBootstrap)
+            self.GrSph.MeanBetaBootstrap = scipy.array(self.GrSph.MeanBetaBootstrap)
         
         print "CreateGridLogBins ended\n"
         
