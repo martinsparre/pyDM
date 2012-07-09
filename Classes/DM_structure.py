@@ -91,9 +91,9 @@ class Grid:
         self.MeanVr = []
         self.CumulativeMass = []
         self.SigmaTensor = []
-        self.Lx = []
-        self.Ly = []
-        self.Lz = []
+        self.Ekinx = []
+        self.Ekiny = []
+        self.Ekinz = []
         self.dnu2dpsi2_psi = None
         self.dnu2dpsi2 = None
         self.drhodr = None
@@ -647,6 +647,10 @@ class DM_structure:
             Lx = scipy.mean(abs(self.Snapshot.y[Particles]*self.Snapshot.vz[Particles]-self.Snapshot.z[Particles]*self.Snapshot.vy[Particles]))
             Ly = scipy.mean(abs(self.Snapshot.z[Particles]*self.Snapshot.vx[Particles]-self.Snapshot.x[Particles]*self.Snapshot.vz[Particles]))
             Lz = scipy.mean(abs(self.Snapshot.x[Particles]*self.Snapshot.vy[Particles]-self.Snapshot.y[Particles]*self.Snapshot.vx[Particles]))
+
+            Ekinx = 0.5*scipy.mean(self.Snapshot.vx[Particles]**2)
+            Ekiny = 0.5*scipy.mean(self.Snapshot.vy[Particles]**2)
+            Ekinz = 0.5*scipy.mean(self.Snapshot.vz[Particles]**2)
             
             self.GrSph.Rmin.append(RminBin)
             self.GrSph.Rmax.append(RmaxBin)
@@ -660,10 +664,10 @@ class DM_structure:
                 self.GrSph.V.append(V)
             self.GrSph.MeanVr.append(MeanVr)
             self.GrSph.CumulativeMass.append(sum(self.GrSph.MassInBin))
-            self.GrSph.Lx.append(Lx)
-            self.GrSph.Ly.append(Ly)
-            self.GrSph.Lz.append(Lz)
-
+            self.GrSph.Ekinx.append(Ekinx)
+            self.GrSph.Ekiny.append(Ekiny)
+            self.GrSph.Ekinz.append(Ekinz)
+            
         self.GrSph.R = (scipy.array(self.GrSph.Rmin)+scipy.array(self.GrSph.Rmax))/2.0
         gamma=[]
         kappa=[]
@@ -696,9 +700,9 @@ class DM_structure:
         self.GrSph.Kappa = scipy.array(self.GrSph.Kappa)
         self.GrSph.CumulativeMass = scipy.array(self.GrSph.CumulativeMass)
         self.GrSph.JeansMassFrac = - self.GrSph.CumulativeMass / self.GrSph.R / self.GrSph.Sigma2r / (self.GrSph.Gamma+self.GrSph.Kappa+2.0*self.GrSph.Beta)
-        self.GrSph.Lx = scipy.array(self.GrSph.Lx)
-        self.GrSph.Ly = scipy.array(self.GrSph.Ly)
-        self.GrSph.Lz = scipy.array(self.GrSph.Lz)
+        self.GrSph.Ekinx = scipy.array(self.GrSph.Ekinx)
+        self.GrSph.Ekiny = scipy.array(self.GrSph.Ekiny)
+        self.GrSph.Ekinz = scipy.array(self.GrSph.Ekinz) 
         
         if CalcUncBeta and UseSphericalCoordinates:
             self.GrSph.UncBetaBootstrap = scipy.array(self.GrSph.UncBetaBootstrap)
