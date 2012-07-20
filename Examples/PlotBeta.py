@@ -7,6 +7,7 @@ import scipy
 import pylab
 from math import pi
 import copy,sys
+import numpy.random
 
 
 ImpactParameter = True 
@@ -27,7 +28,12 @@ def SetLabels(xsize=24,ysize=24):
         tick.label1.set_fontsize(ysize)
         
 #FileName = '/home/ms/Uni/DarkMatter/SimulationDataAndAnalysis/ROI/OM_ROI00_rAN0.2_HQ_000'
-FileName = '/home/ms/Uni/DarkMatter/AllSimulations/MergerAnisotropy/1HqIso_Impact0_121'
+#FileName = '/home/ms/Uni/DarkMatter/AllSimulations/MergerAnisotropy/1HqIso_Impact0_121'
+#FileName = '/home/ms/Uni/DarkMatter/AllSimulations/MergerAnisotropy/1HqIso_Impact10_120'
+#FileName = '/home/ms/Uni/DarkMatter/AllSimulations/CloneMerge/Mergers7_HQA_081'
+#FileName = '/home/ms/Uni/DarkMatter/AllSimulations/MergerAnisotropy/1HQOM_Impact0_121'
+#FileName = '/home/ms/Uni/DarkMatter/AllSimulations/MergerAnisotropy/Hq_0.1_0.5_080'
+FileName = '/home/ms/Uni/DarkMatter/AllSimulations/MergerAnisotropy/Hq_0.1_0.5Impact_089'
 #FileName = '/home/ms/Uni/DarkMatter/SimulationDataAndAnalysis/MergerAnisotropy2012/Simulations/PyDM1/1HqIso_000'
 
 A = DM_structure.DM_structure(FileName)
@@ -37,15 +43,18 @@ A.CenterParticlePositions()
 A.CenterParticleVelocities()
 GridSph = A.CreateGridLogBins(NBins=50,Rmin=0.01,Rmax=50,CalcUncBeta=True)
 
-plt.subplot(1,3,1)
+plt.figure(1)
+plt.subplot(1,2,1)
 
 
-
-chi2 = GridSph.Beta*0
+Chi2List = []
 Ncones = 0
 
-#a,b,c = [],[],[]
-AngleFile = open('../108.txt','r')
+
+BetaCones = []
+
+AngleFile = open('../192.txt','r')
+#AngleFile = open('../192.txt','r')
 for line in AngleFile:
     tmp = line.split()
     if len(tmp) != 5:
@@ -58,22 +67,16 @@ for line in AngleFile:
     B = copy.deepcopy(A)
     B.Snapshot.SelectParticlesInCone(x,y,z,3.1415/8.0)
 
-
     GridSphB = B.CreateGridLogBins(NBins=50,Rmin=0.01,Rmax=50,CalcUncBeta=True)
 
-#    a.append(float(tmp[3]))
-#    b.append(float(tmp[4])) 
-#    c.append(GridSphB.Beta[20])    
-
-    plt.subplot(1,3,1)
+    plt.subplot(1,2,1)
     plt.plot(log10(GridSphB.R),GridSphB.Beta,'-',color='black',lw=1)
-
-#    plt.errorbar(log10(GridSphB.R),GridSphB.MeanBetaBootstrap,yerr=GridSphB.UncBetaBootstrap,color='red',lw=1)
-    chi2 += (GridSphB.MeanBetaBootstrap-GridSph.MeanBetaBootstrap)**2 / (GridSphB.UncBetaBootstrap**2+0.002**2)
+    BetaCones.append(scipy.mean(GridSphB.Beta[18:23]))
+    print scipy.mean(GridSphB.R[18:23])
+    Chi2List.append((GridSphB.MeanBetaBootstrap-GridSph.MeanBetaBootstrap)**2 / (GridSphB.UncBetaBootstrap**2+0.025**2))
     Ncones += 1
     print 'Cone number ',Ncones
-
-chi2 /= Ncones 
+Chi2List = scipy.array(Chi2List)
 AngleFile.close()
 
 
@@ -91,17 +94,48 @@ SetLabels(20,20)
 plt.annotate(r'$r_{-2}$', xy=(-0.345, 0.5), xytext=(-0.345, 0.65),fontsize=26,ha='center',arrowprops=dict(facecolor='grey', shrink=0.05))
 
 
-plt.subplot(1,3,2)
+plt.subplot(1,2,2)
 
-plt.plot(log10(GridSphB.R),chi2)
+
+
+#Particles[0][numpy.random.randint(0,high=len(Particles[0]),size=len(Particles[0]))]
+
+#calc Chi2:
+Chi2Total = Chi2List[0]*0.0
+for chi2 in Chi2List:
+    Chi2Total += chi2
+Chi2Total /= len(Chi2List)
+    
+#bootstrap to get uncertainty:
+BootstrapLists = []
+for i in range(100):
+    IDs = numpy.random.randint(0,high=len(Chi2List),size=len(Chi2List))
+    NewChi2List = Chi2List[[IDs]]
+    NewChi2Total = Chi2List[0]*0.0
+    for chi2 in NewChi2List:
+        NewChi2Total += chi2
+    NewChi2Total /= len(NewChi2List)
+    BootstrapLists.append(NewChi2Total)
+
+Mean = scipy.mean(BootstrapLists,axis=0)
+Std = scipy.std(BootstrapLists,axis=0)
+
+plt.errorbar(log10(GridSphB.R), Mean, yerr=Std, color='black')
+plt.plot(log10(GridSphB.R),Chi2Total)
 plt.xlim((-1,1))
-plt.ylim((0.0,10.0))
+plt.ylim((0.0,20.0))
 plt.grid()
 plt.xlabel(r'$\log r$',fontsize=24)
 plt.ylabel(r'$\chi^2$',fontsize=24)
-#plt.subplot(1,3,3)
-#plt.contourf(a,b,c)
 
+
+
+
+import numpy as np
+import healpy as hp
+plt.figure(2)
+NSIDE = 4
+m = scipy.array(BetaCones)
+
+hp.mollview(m, title="",min=-0.2,max=0.35)
 plt.show()
-
-
