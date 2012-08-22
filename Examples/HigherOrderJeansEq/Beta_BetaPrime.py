@@ -26,7 +26,7 @@ def SetLabels(xsize=20,ysize=20):
     for tick in ax.yaxis.get_major_ticks():
         tick.label1.set_fontsize(ysize)
         
-BetaNOrder = 4
+BetaNOrder = 5
 
 FileNames = ['00-5G20_001','0G20_001','0GManySmall_39_001','hooverG20_001','om0-3.5G20_001','OMG20_001','s1G20_001','s2G20_001','s3G20_001','s4G20_001']
 PATH = '/home/ms/Uni/DarkMatter/AllSimulations/G/'
@@ -152,7 +152,7 @@ plt.plot(x,0*x,'-',color='grey',lw=2)
 
 
 plt.xlabel(r'$\beta$',fontsize=24)
-plt.ylabel(r'$\beta_4 - \beta$',fontsize=24)
+plt.ylabel(r'$\beta_5 - \beta$',fontsize=24)
 plt.xlim((-1,1))
 plt.ylim((-1,1))
 plt.grid()
