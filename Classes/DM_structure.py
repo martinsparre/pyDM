@@ -446,6 +446,7 @@ class DM_structure:
     def SetBetaNOrder(self,value):
         self.BetaN_order = value
     
+    
     def GetSnapshot(self):
         if self.Snapshot == None:
             print "-Warning: In GetGadget2Snapshot - snapshot not defined"

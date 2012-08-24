@@ -103,7 +103,32 @@ class Gadget2Snapshot:
         self.NPartTotal = len(self.x)
         self.NPart = [0,len(self.x),0,0,0,0]        
         
-        
+    def WriteTipsy(self,Filename):
+        "Write to a tipsy ascii file"
+        f = open(Filename,'w+')
+        #Nparticles Ngas Nstars  Ndimensions Time
+        f.write(str(len(self.x))+ ' 0 0\n3\n1.0\n')
+        self.m.tofile(f,sep='\n')
+        f.write('\n')
+        self.x.tofile(f,sep='\n')
+        f.write('\n')
+        self.y.tofile(f,sep='\n')
+        f.write('\n')
+        self.z.tofile(f,sep='\n')
+        f.write('\n')
+        self.vx.tofile(f,sep='\n')
+        f.write('\n')
+        self.vy.tofile(f,sep='\n')
+        f.write('\n')
+        self.vz.tofile(f,sep='\n')
+        f.write('\n')
+        Softening = self.vz + 0.005
+        Softening.tofile(f,sep='\n')
+        f.write('\n')
+        self.V.tofile(f,sep='\n')
+        f.write('\n')
+        f.close()
+            
         
     def WriteToAscii(self,FileName):
         f=open(FileName,'w+')
