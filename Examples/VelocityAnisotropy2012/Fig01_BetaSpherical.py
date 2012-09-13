@@ -27,7 +27,7 @@ def SetLabels(xsize=24,ysize=24):
         tick.label1.set_fontsize(ysize)
         
 
-ShowSim = 6*[True]+3*[False]+[True]*1+5*[False]
+ShowSim = 6*[True]+5*[False]
 
 
 col = ['red', 'blue', 'green', 'maroon','orange','black','pink','yellow','cyan']
@@ -221,7 +221,7 @@ Files = ['OM_ROI00_rAN0.2_HQ_000','OM_ROI00_rAN0.2_HQ_081','ROI05_000','ROI05_12
 Offset = [0.35,0.2,0.2,0.2]
 SIMULATION_DIR = '/home/ms/Uni/DarkMatter/AllSimulations/ROI/'
 mar = ['--<','-<','--*','-*']
-col = ['green','blue','green','blue']
+col = ['blue','green','blue','green']
 Label = [r'IC', r'Final']*2
 
 

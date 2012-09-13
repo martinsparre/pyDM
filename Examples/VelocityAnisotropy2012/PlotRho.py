@@ -51,14 +51,29 @@ def SetLabels(xsize=24,ysize=24):
     for tick in ax.yaxis.get_major_ticks():
         tick.label1.set_fontsize(ysize)
         
-#FileName = '/home/ms/Uni/DarkMatter/SimulationDataAndAnalysis/ROI/OM_ROI00_rAN0.2_HQ_000'
+
 #FileName = '/home/ms/Uni/DarkMatter/AllSimulations/MergerAnisotropy/1HqIso_Impact0_121'
 #FileName = '/home/ms/Uni/DarkMatter/AllSimulations/MergerAnisotropy/1HqIso_Impact10_120'
 #FileName = '/home/ms/Uni/DarkMatter/AllSimulations/CloneMerge/Mergers7_HQA_081'
 #FileName = '/home/ms/Uni/DarkMatter/AllSimulations/MergerAnisotropy/1HQOM_Impact0_121'
-FileName = '/home/ms/Uni/DarkMatter/AllSimulations/MergerAnisotropy/Hq_0.1_0.5_080'
+#FileName = '/home/ms/Uni/DarkMatter/AllSimulations/MergerAnisotropy/Hq_0.1_0.5_080'
 #FileName = '/home/ms/Uni/DarkMatter/AllSimulations/MergerAnisotropy/Hq_0.1_0.5Impact_089'
 #FileName = '/home/ms/Uni/DarkMatter/SimulationDataAndAnalysis/MergerAnisotropy2012/Simulations/PyDM1/1HqIso_000'
+FileName = '/home/ms/Uni/DarkMatter/AllSimulations/HJS2010/s4_16'
+FileName = '/home/ms/Uni/DarkMatter/AllSimulations/CloneMerge/Mergers03_7_041'
+FileName = '/home/ms/Uni/DarkMatter/AllSimulations/ViaLactea/ViaLactea01_1e6_101'
+
+#00-5G20_001
+#0G20_001
+#hooverG20_001
+#om0-3.5G20_001
+#OMG20_001
+#s1G20_001
+#s2G20_001
+#s3G20_001
+#s4G20_001
+
+
 
 A = DM_structure.DM_structure(FileName)
 A.FindCenter()
@@ -66,6 +81,12 @@ A.FindCenterVel()
 A.CenterParticlePositions()
 A.CenterParticleVelocities()
 GridSph = A.CreateGridLogBins(NBins=50,Rmin=0.01,Rmax=50,CalcUncBeta=True)
+
+
+plt.subplot(1,3,3)
+plt.plot(log10(GridSph.R),GridSph.Gamma,'-',color='black',lw=1)
+plt.grid()
+
 
 X = []
 Y = []
@@ -76,7 +97,7 @@ Cones = []
 BetaCones = []
 
 Ncones = 0
-AngleFile = open('../12.txt','r')
+AngleFile = open('48.txt','r')
 #AngleFile = open('../192.txt','r')
 for line in AngleFile:
     tmp = line.split()
@@ -91,8 +112,12 @@ for line in AngleFile:
     B.Snapshot.SelectParticlesInCone(x,y,z,3.1415/8.0)
 
     GridSphB = B.CreateGridLogBins(NBins=50,Rmin=0.01,Rmax=50,CalcUncBeta=True)
-
+    
+    plt.subplot(1,3,1)
     plt.plot(log10(GridSphB.R),log10(GridSphB.Rho),'-',color='black',lw=1)
+    plt.subplot(1,3,2)
+    plt.plot(log10(GridSphB.R),GridSphB.Beta,'-',color='black',lw=1)
+    
     Cones.append(GridSphB)
     Ncones += 1
     Rho26.append(log10(GridSphB.Rho[26]))
@@ -109,8 +134,10 @@ B = copy.deepcopy(A)
 B.Snapshot.SelectParticlesInCone(1,0,0,3.1415/8.0)
 
 GridSphB = B.CreateGridLogBins(NBins=50,Rmin=0.01,Rmax=50,CalcUncBeta=True)
-
+plt.subplot(1,3,1)
 plt.plot(log10(GridSphB.R),log10(GridSphB.Rho),'-',color='red',lw=2)
+
+
 
 B = copy.deepcopy(A)
 B.Snapshot.SelectParticlesInCone(-1,0,0,3.1415/8.0)
@@ -125,6 +152,27 @@ print 'Min:',X[ID],Y[ID],Z[ID],Rho26[ID]
 
 ID = scipy.argmax(Rho26)
 print 'Max:',X[ID],Y[ID],Z[ID],Rho26[ID]
+
+
+
+plt.subplot(1,3,1)
+plt.xlabel('$\log r$')
+plt.ylabel('log rho')
+
+plt.subplot(1,3,2)
+plt.ylim((-1,1))
+plt.xlabel('$\log r$')
+plt.ylabel('$\beta$')
+
+
+plt.subplot(1,3,3)
+plt.ylim((-5,1))
+plt.xlabel('$\log r$')
+plt.ylabel('$\gamma$')
+
+#plt.subplot(1,2,2)
+#plt.ylim((-1,1))
+
 
 plt.show()
 
