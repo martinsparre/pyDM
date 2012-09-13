@@ -13,6 +13,7 @@ import scipy.interpolate,scipy.optimize
 
 def GetPrincipalAxes(Angle1,Angle2,Angle3):
     "Input: the three euler angles from Tipsy. Output: the three axes..."
+
     pi = 3.14159265359
     phi =  Angle1 * pi/180.0
     theta = Angle2  * pi/180.0
@@ -84,22 +85,74 @@ def SetLabels(xsize=24,ysize=24):
     for tick in ax.yaxis.get_major_ticks():
         tick.label1.set_fontsize(ysize)
         
+Case = 2
+if Case == 0:
+    FileName = '/home/ms/Uni/DarkMatter/AllSimulations/G/0G20_001'
+    ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/G/shapes/shape_0G20_001.txt'
+    Offset = 0.6
+    Color = ['green','yellow','red']    
+    Label = r'$G$-variation'    
+if Case == 1:
+    FileName = '/home/ms/Uni/DarkMatter/AllSimulations/HJS2010/0E21_001'
+    ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/HJS2010/shapes/shape_0E21_001.txt'
+    Offset = 1.0
+    Color = ['green','yellow','red']
+    Label = 'Energy exchange'    
+if Case == 2:
+    FileName = '/home/ms/Uni/DarkMatter/AllSimulations/G/s4G20_001'
+    ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/G/shapes/shape_s4G20_001.txt'
+    Offset = 0.6
+    Color = ['green','red','yellow']
+    Label = r'$G$-variation'
+if Case == 3:
+    FileName = '/home/ms/Uni/DarkMatter/AllSimulations/InhomogeneousInfall/Infall_sub_1e6.bin_201'
+    ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/InhomogeneousInfall/shapes/shape_Infall_sub_1e6.bin_201.txt'
+    Offset = 0.9
+    Color = ['green','yellow','red']
+    Label = 'Cold collapse'
+if Case == 4:
+    FileName = '/home/ms/Uni/DarkMatter/AllSimulations/CloneMerge/Mergers7_HQA_081'
+    ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/CloneMerge/shapes/shape_Mergers7_HQA_081.txt'
+    Offset = 0.0
+    Color = ['green','yellow','red']
+    Label = 'Major mergers'
+if Case == 5:
+    FileName = '/home/ms/Uni/DarkMatter/AllSimulations/ROI/OM_ROI00_rAN0.2_HQ_081'
+    ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/ROI/shapes/shape_OM_ROI00_rAN0.2_HQ_081.txt'
+    Offset = 0.35
+    Color = ['green','blue','red']
+    Label = 'Unstable model'    
+if Case == 6:
+    FileName = '/home/ms/Uni/DarkMatter/AllSimulations/ROI/ROI05_120'
+    ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/ROI/shapes/shape_ROI05_120.txt'
+    Offset = 0.2    
+    Color = ['red','yellow','green']
+    Label = 'Unstable model'    
+if Case == 7:
+    FileName = '/home/ms/Uni/DarkMatter/AllSimulations/G/s1G20_001'
+    ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/G/shapes/shape_s1G20_001.txt'
+    Offset = 0.6
+    Color = ['green','yellow','red']    
+    Label = r'$G$-variation'    
 
-
-FileName = '/home/ms/Uni/DarkMatter/AllSimulations/CloneMerge/Mergers7_HQA_081'
-ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/CloneMerge/shapes/shape_Mergers7_HQA_081.txt'
+   
+   
+    #FileName = '/home/ms/Uni/DarkMatter/AllSimulations/CloneMerge/Mergers7_HQA_081'
+#ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/CloneMerge/shapes/shape_Mergers7_HQA_081.txt'
 
 plt.subplot(1,3,3)
-plt.subplots_adjust(left=0.08, bottom=0.12, right=0.97, top=0.98,wspace=0.25, hspace=0.0)
+plt.subplots_adjust(left=0.08, bottom=0.14, right=0.97, top=0.97,wspace=0.25, hspace=0.0)
 r,BoverA,CoverA,phi,theta,psi = ReadTipsyFile(ShapeFile)
-plt.plot(log10(r),CoverA,'-o',color='red',label=r'$c/a$',lw=2,ms=7,mew=1)
-plt.plot(log10(r),BoverA,'-x',color='black',label=r'$b/a$',lw=2,ms=7,mew=1)
+plt.plot(log10(r)+Offset,CoverA,'-o',color='red',label=r'$c/a$',lw=2,ms=7,mew=1)
+plt.plot(log10(r)+Offset,BoverA,'-x',color='black',label=r'$b/a$',lw=2,ms=7,mew=1)
 plt.legend(prop=dict(size=18), numpoints=2, ncol=1,frameon=True,loc=4)
 
 plt.ylabel(r'$c/a$ or $b/a$',fontsize=24)
 plt.xlabel(r'$\log r/r_{-2}$',fontsize=24)
 SetLabels(20,20)
 plt.ylim((-0.0,1.05))
+
+
 
 Major,Inter,Minor = GetPrincipalAxes(phi[10],theta[10],psi[10])
 
@@ -152,23 +205,23 @@ for line in AngleFile:
     
     plt.subplot(1,3,1)
     if MajorAngle<3.1415/8.0:
-        plt.plot(log10(GridSphB.R),GridSphB.Beta,'-',color='red',lw=1.5,zorder=6)
+        plt.plot(log10(GridSphB.R)+Offset,GridSphB.Beta,'-',color=Color[0],lw=1.5,zorder=6)
     elif InterAngle<3.1415/8.0:
-        plt.plot(log10(GridSphB.R),GridSphB.Beta,'-',color='blue',lw=1.5,zorder=6)
+        plt.plot(log10(GridSphB.R)+Offset,GridSphB.Beta,'-',color=Color[1],lw=1.5,zorder=6)
     elif MinorAngle<3.1415/8.0:
-        plt.plot(log10(GridSphB.R),GridSphB.Beta,'-',color='green',lw=1.5,zorder=6)        
+        plt.plot(log10(GridSphB.R)+Offset,GridSphB.Beta,'-',color=Color[2],lw=1.5,zorder=6)        
     else:
-        plt.plot(log10(GridSphB.R),GridSphB.Beta,'-',color='black',lw=0.5,zorder=5)
+        plt.plot(log10(GridSphB.R)+Offset,GridSphB.Beta,'-',color='black',lw=0.5,zorder=5)
 
     plt.subplot(1,3,2)
     if MajorAngle<3.1415/8.0:
-        plt.plot(log10(GridSphB.R),log10(GridSphB.R**2*GridSphB.Rho),'-',color='red',lw=1.5,zorder=6)
+        plt.plot(log10(GridSphB.R)+Offset,log10(GridSphB.R**0*GridSphB.Rho),'-',color=Color[0],lw=1.5,zorder=6)
     elif InterAngle<3.1415/8.0:
-        plt.plot(log10(GridSphB.R),log10(GridSphB.R**2*GridSphB.Rho),'-',color='blue',lw=1.5,zorder=6)
+        plt.plot(log10(GridSphB.R)+Offset,log10(GridSphB.R**0*GridSphB.Rho),'-',color=Color[1],lw=1.5,zorder=6)
     elif MinorAngle<3.1415/8.0:
-        plt.plot(log10(GridSphB.R),log10(GridSphB.R**2*GridSphB.Rho),'-',color='green',lw=1.5,zorder=6)        
+        plt.plot(log10(GridSphB.R)+Offset,log10(GridSphB.R**0*GridSphB.Rho),'-',color=Color[2],lw=1.5,zorder=6)        
     else:
-        plt.plot(log10(GridSphB.R),log10(GridSphB.R**2*GridSphB.Rho),'-',color='black',lw=0.5,zorder=5)        
+        plt.plot(log10(GridSphB.R)+Offset,log10(GridSphB.R**0*GridSphB.Rho),'-',color='black',lw=0.5,zorder=5)        
         
     Ncones += 1
     print Ncones
@@ -180,11 +233,35 @@ plt.ylabel(r'$\beta$',fontsize=24)
 plt.xlabel(r'$\log r/r_{-2}$',fontsize=24)
 SetLabels(20,20)
 
+if Case == 2:
+    t=scipy.array([0.14,1.14])
+    plt.plot(t,0*t+0.5,'-',color='cyan', lw = 4,zorder=7)
+elif Case == 1:
+    t=scipy.array([0.31,0.76])
+    plt.plot(t,0*t+0.5,'-',color='cyan', lw = 4,zorder=7)
+
 plt.subplot(1,3,2)
 plt.xlim((-1,2))
-#plt.ylim((-1,1))
-plt.ylabel(r'$\log r^2\rho$',fontsize=24)
+
+plt.ylabel(r'$\log \rho$',fontsize=24)
 plt.xlabel(r'$\log r/r_{-2}$',fontsize=24)
 SetLabels(20,20)
+if Case in [1,3,4]:
+    plt.ylim((-10,2))
+    plt.text(-0.25,0.6,Label,color='black',fontsize=22)
+else:
+    plt.ylim((-10,0))
+    plt.text(-0.25,0.6-2,Label,color='black',fontsize=22)
+
+plt.text(-0.75,-6,'Major',color='red',fontsize=22)
+plt.text(-0.75,-7,'Intermediate',color='green',fontsize=22)
+plt.text(-0.75,-8,'Minor',color='yellow',fontsize=22)
+
+if Case == 2:
+    t=scipy.array([0.64,0.85])
+    plt.plot(t,0*t-4.165,'-',color='cyan', lw = 4,zorder=7)
+if Case == 1:
+    t=scipy.array([0.33,0.64])
+    plt.plot(t,0*t-2.02,'-',color='cyan', lw = 4,zorder=7)
 
 plt.show()
