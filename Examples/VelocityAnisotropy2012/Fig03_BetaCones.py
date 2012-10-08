@@ -84,37 +84,37 @@ def SetLabels(xsize=24,ysize=24):
 
     for tick in ax.yaxis.get_major_ticks():
         tick.label1.set_fontsize(ysize)
-        
-Case = 2
+
+Case = 0
 if Case == 0:
     FileName = '/home/ms/Uni/DarkMatter/AllSimulations/G/0G20_001'
     ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/G/shapes/shape_0G20_001.txt'
     Offset = 0.6
-    Color = ['green','yellow','red']    
+    Color = ['green','orange','red']    
     Label = r'$G$-variation'    
 if Case == 1:
     FileName = '/home/ms/Uni/DarkMatter/AllSimulations/HJS2010/0E21_001'
     ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/HJS2010/shapes/shape_0E21_001.txt'
     Offset = 1.0
-    Color = ['green','yellow','red']
+    Color = ['green','orange','red']
     Label = 'Energy exchange'    
 if Case == 2:
     FileName = '/home/ms/Uni/DarkMatter/AllSimulations/G/s4G20_001'
     ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/G/shapes/shape_s4G20_001.txt'
     Offset = 0.6
-    Color = ['green','red','yellow']
+    Color = ['green','red','orange']
     Label = r'$G$-variation'
 if Case == 3:
     FileName = '/home/ms/Uni/DarkMatter/AllSimulations/InhomogeneousInfall/Infall_sub_1e6.bin_201'
     ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/InhomogeneousInfall/shapes/shape_Infall_sub_1e6.bin_201.txt'
     Offset = 0.9
-    Color = ['green','yellow','red']
+    Color = ['green','orange','red']
     Label = 'Cold collapse'
 if Case == 4:
     FileName = '/home/ms/Uni/DarkMatter/AllSimulations/CloneMerge/Mergers7_HQA_081'
     ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/CloneMerge/shapes/shape_Mergers7_HQA_081.txt'
     Offset = 0.0
-    Color = ['green','yellow','red']
+    Color = ['green','orange','red']
     Label = 'Major mergers'
 if Case == 5:
     FileName = '/home/ms/Uni/DarkMatter/AllSimulations/ROI/OM_ROI00_rAN0.2_HQ_081'
@@ -126,13 +126,13 @@ if Case == 6:
     FileName = '/home/ms/Uni/DarkMatter/AllSimulations/ROI/ROI05_120'
     ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/ROI/shapes/shape_ROI05_120.txt'
     Offset = 0.2    
-    Color = ['red','yellow','green']
+    Color = ['red','orange','green']
     Label = 'Unstable model'    
 if Case == 7:
     FileName = '/home/ms/Uni/DarkMatter/AllSimulations/G/s1G20_001'
     ShapeFile = '/home/ms/Uni/DarkMatter/AllSimulations/G/shapes/shape_s1G20_001.txt'
     Offset = 0.6
-    Color = ['green','yellow','red']    
+    Color = ['green','orange','red']    
     Label = r'$G$-variation'    
 
    
@@ -201,15 +201,26 @@ for line in AngleFile:
     B.Snapshot.SelectParticlesInCone(x,y,z,3.1415/8.0)
 
     GridSphB = B.CreateGridLogBins(NBins=50,Rmin=0.01,Rmax=50,CalcUncBeta=True)
-    
+    if MajorAngle < 0.0:
+        print '--John john'
     
     plt.subplot(1,3,1)
     if MajorAngle<3.1415/8.0:
         plt.plot(log10(GridSphB.R)+Offset,GridSphB.Beta,'-',color=Color[0],lw=1.5,zorder=6)
+        print '---------------------------'
+        print '--------Major--------------'
+        print '---------------------------'
+        print MajorX,MajorY,MajorZ
+        print x,y,z
     elif InterAngle<3.1415/8.0:
         plt.plot(log10(GridSphB.R)+Offset,GridSphB.Beta,'-',color=Color[1],lw=1.5,zorder=6)
     elif MinorAngle<3.1415/8.0:
-        plt.plot(log10(GridSphB.R)+Offset,GridSphB.Beta,'-',color=Color[2],lw=1.5,zorder=6)        
+        plt.plot(log10(GridSphB.R)+Offset,GridSphB.Beta,'-',color=Color[2],lw=1.5,zorder=6)
+        print '---------------------------'
+        print '--------Minor--------------'
+        print '---------------------------'
+        print MinorX,MinorY,MinorZ
+        print x,y,z        
     else:
         plt.plot(log10(GridSphB.R)+Offset,GridSphB.Beta,'-',color='black',lw=0.5,zorder=5)
 
@@ -255,7 +266,7 @@ else:
 
 plt.text(-0.75,-6,'Major',color='red',fontsize=22)
 plt.text(-0.75,-7,'Intermediate',color='green',fontsize=22)
-plt.text(-0.75,-8,'Minor',color='yellow',fontsize=22)
+plt.text(-0.75,-8,'Minor',color='orange',fontsize=22)
 
 if Case == 2:
     t=scipy.array([0.64,0.85])
