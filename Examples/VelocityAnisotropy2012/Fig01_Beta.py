@@ -41,6 +41,9 @@ plt.subplots_adjust(left=0.11, bottom=0.07, right=0.98, top=0.98,wspace=0.0, hsp
 Files = [SIMULATION_DIR+'00-5G20_001',SIMULATION_DIR+'s2G20_001',SIMULATION_DIR+'0G20_001',SIMULATION_DIR+'OMG20_001',SIMULATION_DIR+'s3G20_001',SIMULATION_DIR+'s1G20_001',SIMULATION_DIR+'s4G20_001',SIMULATION_DIR+'om0-3.5G20_001']
 
 
+
+
+
 #i = 1, gives a somewhat unstable beta
 for i in range(len(Files)):
     #break
@@ -166,6 +169,34 @@ SetLabels(1,1)
 
 ax = plt.subplot(3,2,3)
 ax.text(-0.8, 0.9, r'III) Cold collapse', fontsize=20)
+
+
+FileName = '/home/ms/Uni/DarkMatter/AllSimulations/InhomogeneousInfall/Infall_sub_1e6.bin_201'    
+
+A = DM_structure.DM_structure(FileName)
+A.FindCenter()
+A.FindCenterVel()
+A.CenterParticlePositions()
+A.CenterParticleVelocities()
+GridSph = A.CreateGridLogBins(NBins=100,Rmin=0.001)
+GridSphA = A.CreateGridLogBins(NBins=50,Rmin=0.01,Rmax=50)
+plt.plot(log10(GridSphA.R)+0.9,GridSphA.Beta,'-o',label=r'Spherical',color='black',lw=1,ms=7,mew=1)
+
+
+FileName = '/home/ms/Uni/DarkMatter/AllSimulations/InhomogeneousInfall/05ColdCollapse_120'    
+
+A = DM_structure.DM_structure(FileName)
+A.FindCenter()
+A.FindCenterVel()
+A.CenterParticlePositions()
+A.CenterParticleVelocities()
+GridSph = A.CreateGridLogBins(NBins=100,Rmin=0.001)
+GridSphA = A.CreateGridLogBins(NBins=50,Rmin=0.01,Rmax=50)
+plt.plot(log10(GridSphA.R)+0.9,GridSphA.Beta,'-x',label=r'Spherical',color='black',lw=1,ms=7,mew=1)    
+
+
+
+
 
 if ShowSim[2] == True:
     FileName = '/home/ms/Uni/DarkMatter/AllSimulations/InhomogeneousInfall/Infall_sub_1e6.bin_201'    

@@ -78,6 +78,8 @@ class Grid:
         self.Sigma2 = []
         self.Sigma2r = []
         self.Beta = []
+        self.Beta2 = []
+        self.BetaN = []
         self.UncBetaBootstrap = []
         self.MeanBetaBootstrap = []        
         self.Gamma = []
@@ -439,8 +441,12 @@ class DM_structure:
         self.Mean_vz = 0.0
         self.CenterFound = False
         self.CenterVelFound = False
+        self.BetaN_order=3
 
-
+    def SetBetaNOrder(self,value):
+        self.BetaN_order = value
+    
+    
     def GetSnapshot(self):
         if self.Snapshot == None:
             print "-Warning: In GetGadget2Snapshot - snapshot not defined"
@@ -528,6 +534,7 @@ class DM_structure:
     def CreateGridLogBins(self,Rmin=False,Rmax=False,NBins=100,CalcVelDispTensor = False,UseSphericalCoordinates=True,CalcUncBeta=False):
         "Spherical bins, distributed equally in logspace"
         print "\nCreateGridLogBins started"
+
         r = scipy.sqrt(self.Snapshot.x*self.Snapshot.x+self.Snapshot.y*self.Snapshot.y+self.Snapshot.z*self.Snapshot.z)
         
         Index = scipy.argsort(r)
@@ -591,6 +598,9 @@ class DM_structure:
                 Sigma2Phi = scipy.mean(VPhi[Particles]**2)-scipy.mean(VPhi[Particles])**2
                 Sigma2 = Sigma2r + Sigma2Theta + Sigma2Phi
                 Beta =  1.0 - (Sigma2Theta+Sigma2Phi)/(2.0*Sigma2r)
+                Beta2 =  1.0 - 1.5*scipy.mean(VR[Particles]**2 * (VTheta[Particles]**2 + VPhi[Particles]**2) ) / scipy.mean(VR[Particles]**4)
+                
+                BetaN = 1.0-(self.BetaN_order-0.5) * scipy.mean(VR[Particles]**(2.0*self.BetaN_order-2.0) * (VTheta[Particles]**2 + VPhi[Particles]**2) ) /  scipy.mean(VR[Particles]**(2*self.BetaN_order)  )         
                 MeanVr = scipy.mean(VR[Particles])
 
 
@@ -660,6 +670,8 @@ class DM_structure:
             self.GrSph.Sigma2.append(Sigma2 )            
             self.GrSph.Sigma2r.append(Sigma2r )
             self.GrSph.Beta.append(Beta)
+            self.GrSph.Beta2.append(Beta2)           
+            self.GrSph.BetaN.append(BetaN)                       
             if self.Snapshot.V != None:
                 self.GrSph.V.append(V)
             self.GrSph.MeanVr.append(MeanVr)
@@ -695,6 +707,8 @@ class DM_structure:
         self.GrSph.Sigma2 = scipy.array(self.GrSph.Sigma2)
         self.GrSph.Sigma2r = scipy.array(self.GrSph.Sigma2r)
         self.GrSph.Beta = scipy.array(self.GrSph.Beta)
+        self.GrSph.Beta2 = scipy.array(self.GrSph.Beta2)
+        self.GrSph.BetaN = scipy.array(self.GrSph.BetaN)        
         self.GrSph.MeanVr = scipy.array(self.GrSph.MeanVr)
         self.GrSph.Gamma = scipy.array(self.GrSph.Gamma)
         self.GrSph.Kappa = scipy.array(self.GrSph.Kappa)
