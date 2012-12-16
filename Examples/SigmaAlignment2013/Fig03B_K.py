@@ -27,7 +27,8 @@ def SetLabels(xsize=24,ysize=24):
         tick.label1.set_fontsize(ysize)
         
 
-Filenames = ['0.1/1HqIso_Impact0_160','0.3/1HqIso_Impact0_160','0.5/1HqIso_Impact0_160']
+#Filenames = ['0.1/1HqIso_Impact0_160','0.3/1HqIso_Impact0_160','0.5/1HqIso_Impact0_160','1.0/1HqIso_Impact0_160','1.5/1HqIso_Impact0_160']
+Filenames = ['0.5/1HqIso_Impact0_160','1.0/1HqIso_Impact0_160','1.5/1HqIso_Impact0_160']
 NFiles = len(Filenames)
 DIR = '/home/ms/Uni/DarkMatter/AllSimulations/SigmaAlignment2013/HeadonMerger_VaryingVel/'
 
