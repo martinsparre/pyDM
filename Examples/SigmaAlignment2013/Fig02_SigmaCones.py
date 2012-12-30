@@ -9,7 +9,7 @@ from math import pi
 import copy,sys
 import numpy.random
 import healpy as hp
-
+import matplotlib
 
 
 ImpactParameter = True 
@@ -21,7 +21,7 @@ plt.rcParams["xtick.major.size"] = 5
 plt.rcParams["ytick.major.size"] = 5
 
 #Functions:
-def SetLabels(xsize=24,ysize=24):
+def SetLabels(xsize=18,ysize=18):
     ax = pylab.gca()
     for tick in ax.xaxis.get_major_ticks():
         tick.label1.set_fontsize(xsize)
@@ -80,7 +80,7 @@ GridSphD = D.CreateGridLogBins(NBins=50,Rmin=0.01,Rmax=50)
 
 #sys.exit()
 
-plt.subplots_adjust(left=0.1, bottom=0.04, right=0.97, top=0.96,wspace=0.0, hspace=0.15)
+plt.subplots_adjust(left=0.08, bottom=0.06, right=0.91, top=0.98,wspace=0.0, hspace=0.16)
 plt.subplot(3,2,1)
 #IC = DM_structure.DM_structure('../1HqIso_000')
 #ICGridSph = IC.CreateGridLogBins(NBins=25,Rmin=0.001,Rmax=9.9)
@@ -98,8 +98,8 @@ plt.xlim((-1,1.19))
 plt.legend(prop=dict(size=18), numpoints=2, ncol=1,frameon=False,loc=1)
 plt.grid()
 #plt.xlabel(r'$\log r$',fontsize=24)
-plt.ylabel(r'$\sigma^2$',fontsize=24)
-SetLabels(1,20)
+plt.ylabel(r'$\sigma^2$',fontsize=20)
+SetLabels(1,18)
 
 
 
@@ -119,8 +119,8 @@ plt.xlim((-1,1.19))
 plt.legend(prop=dict(size=18), numpoints=2, ncol=1,frameon=False,loc=1)
 plt.grid()
 #plt.xlabel(r'$\log r$',fontsize=24)
-plt.ylabel(r'$\sigma^2$',fontsize=24)
-SetLabels(1,20)
+plt.ylabel(r'$\sigma^2$',fontsize=20)
+SetLabels(1,18)
 
 
 
@@ -139,9 +139,9 @@ plt.ylim((-0.0,0.26))
 plt.xlim((-1,1.19))
 plt.legend(prop=dict(size=18), numpoints=2, ncol=1,frameon=False,loc=1)
 plt.grid()
-plt.xlabel(r'$\log r$',fontsize=24)
-plt.ylabel(r'$\sigma^2$',fontsize=24)
-SetLabels(20,20)
+plt.xlabel(r'$\log r$',fontsize=20)
+plt.ylabel(r'$\sigma^2$',fontsize=20)
+SetLabels(18,18)
 
 
 #plt.subplot(3,2,2)
@@ -191,11 +191,13 @@ AngleFile.close()
 NSIDE = 4
 m = scipy.array(SigmaCones)
 
-hp.mollview(m, title=r"The $\sigma^2$-ellipsoid at $\mathcal{A}$",sub=[3,2,2],min=0.01,max=0.07,flip='geo',margins = (0.02,0.02,0.02,0.02))
+matplotlib.rcParams.update({'font.size': 18})
+
+hp.mollview(m, title="",sub=[3,2,2],min=0.01,max=0.07,flip='geo',margins = (0.02,0.02,0.02,0.02))
 plt.text(0,0,'Collision\naxis',horizontalalignment='center',verticalalignment='center',fontsize=16)
 plt.text(-1.8,0.0,'Collision\naxis',horizontalalignment='center',verticalalignment='center',fontsize=16)
 plt.text(1.8,0.0,'Collision\naxis',horizontalalignment='center',verticalalignment='center',fontsize=16)
-
+plt.text(0,1.2,r'The $\sigma^2$-ellipsoid at $\mathcal{A}$',horizontalalignment='center',verticalalignment='center',fontsize=16)
 
 
 #plt.subplot(3,2,4)
@@ -246,11 +248,11 @@ AngleFile.close()
 NSIDE = 4
 m = scipy.array(SigmaCones)
 
-hp.mollview(m, title=r"The $\sigma^2$-ellipsoid at  $\mathcal{B}$",sub=[3,2,4],min=0.01,max=0.07,flip='geo', margins = (0.02,0.02,0.02,0.02))
+hp.mollview(m, title=r"",sub=[3,2,4],min=0.01,max=0.07,flip='geo', margins = (0.02,0.02,0.02,0.02))
 plt.text(0,0,'Collision\naxis',horizontalalignment='center',verticalalignment='center',fontsize=16)
 plt.text(-1.8,0.0,'Collision\naxis',horizontalalignment='center',verticalalignment='center',fontsize=16)
 plt.text(1.8,0.0,'Collision\naxis',horizontalalignment='center',verticalalignment='center',fontsize=16)
-
+plt.text(0,1.2,r'The $\sigma^2$-ellipsoid at  $\mathcal{B}$',horizontalalignment='center',verticalalignment='center',fontsize=16)
 
 
 
@@ -314,11 +316,11 @@ AngleFile.close()
 NSIDE = 4
 m = scipy.array(SigmaCones)
 
-hp.mollview(m, title=r"The $\sigma^2$-ellipsoid at $\mathcal{C}$",sub=[3,2,6],min=0.01,max=0.07,flip='geo',margins = (0.02,0.02,0.02,0.02))
+hp.mollview(m, title="",sub=[3,2,6],min=0.01,max=0.07,flip='geo',margins = (0.02,0.02,0.02,0.02))
 plt.text(0,0,'Collision\naxis',horizontalalignment='center',verticalalignment='center',fontsize=16)
 plt.text(-1.8,0.0,'Collision\naxis',horizontalalignment='center',verticalalignment='center',fontsize=16)
 plt.text(1.8,0.0,'Collision\naxis',horizontalalignment='center',verticalalignment='center',fontsize=16)
-
+plt.text(0,1.2,r'The $\sigma^2$-ellipsoid at  $\mathcal{C}$',horizontalalignment='center',verticalalignment='center',fontsize=16)
 
 
 
