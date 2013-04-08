@@ -6,6 +6,7 @@ import scipy.interpolate,scipy.optimize
 import math
 import numpy.random
 
+
 def chunks(l, n):
     """ Yield successive n-sized chunks from l.
     """
@@ -19,6 +20,9 @@ class EnergyGrid:
         self.Mass = None
     
     def Smooth(self,Width=0.1):
+        import pyROOT_functions
+        pyROOT_functions.RootSpline
+        print 1
         self.Mass=scipy.array(pyROOT_functions.RootSpline(scipy.log10(self.E),self.Mass,BandPass=Width))[1]
 
 
@@ -860,6 +864,12 @@ class DM_structure:
 
         for Bin in range(NBins):
             Particles = scipy.where(BinNo==Bin)[0]
+            if len(Particles)==0:
+                print '0 particles'
+                tmpE.append( LeftBinLimit[Bin]+dE/2.0 )
+                tmpMass.append( 0.0 )
+                continue
+            
             Max = E[Particles].max()
             Min = E[Particles].min()
 
